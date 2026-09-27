@@ -17,6 +17,15 @@ def crear():
 
     return redirect("/")
 
+@app.route("/editar/<int:id>", methods=["POST"])
+def editar(id):
+    tarea = request.form["tarea"].strip()
+
+    if 0 <= id < len(tareas) and tarea:
+        tareas[id] = tarea
+
+    return redirect("/")
+
 @app.route("/eliminar/<int:id>")
 def eliminar(id):
     if 0 <= id < len(tareas):
