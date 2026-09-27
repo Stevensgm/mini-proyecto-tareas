@@ -2,13 +2,89 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Tareas</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contenedor {
+            background: white;
+            width: 600px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: #f4f4f4;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .eliminar {
+            background: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Lista de Tareas</h1>
 
-    /crear
-        <input type="text" name="tarea" placeholder="Nueva tarea" required>
+<div class="contenedor">
+    <h1>✅ Lista de Tareas</h1>
+
+    <form action="/crear" method="POST">
+        <input type="text" name="tarea" placeholder="Escribe una tarea..." required>
         <button type="submit">Agregar</button>
     </form>
 
@@ -16,10 +92,14 @@
         {% for tarea in tareas %}
         <li>
             {{ tarea }}
-            /eliminar/{{ loop.index0 }}Eliminar</a>
+            <a class="eliminar" href="/eliminar/{{ loop.index0 }}">
+                Eliminar
+            </a>
         </li>
         {% endfor %}
     </ul>
+
+</div>
 
 </body>
 </html>
