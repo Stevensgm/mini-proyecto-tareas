@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Tareas</title>
+</head>
+<body>
+    <h1>Lista de Tareas</h1>
+
+    /crear
+        <input type="text" name="tarea" placeholder="Nueva tarea" required>
+        <button type="submit">Agregar</button>
+    </form>
+
+    <ul>
+        {% for tarea in tareas %}
+        <li>
+            {{ tarea }}
+            /eliminar/{{ loop.index0 }}Eliminar</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
