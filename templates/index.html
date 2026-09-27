@@ -67,6 +67,29 @@
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .editar {
+            display: flex;
+            gap: 6px;
+        }
+
+        .editar input {
+            width: 220px;
+            padding: 6px;
+        }
+
+        .editar button {
+            padding: 6px 10px;
+            background: #28a745;
         }
 
         .eliminar {
@@ -91,10 +114,14 @@
     <ul>
         {% for tarea in tareas %}
         <li>
-            {{ tarea }}
-            <a class="eliminar" href="/eliminar/{{ loop.index0 }}">
-                Eliminar
-            </a>
+            <span>{{ tarea }}</span>
+            <div class="acciones">
+                <form class="editar" action="/editar/{{ loop.index0 }}" method="POST">
+                    <input type="text" name="tarea" value="{{ tarea }}" required>
+                    <button type="submit">Modificar</button>
+                </form>
+                <a class="eliminar" href="/eliminar/{{ loop.index0 }}">Eliminar</a>
+            </div>
         </li>
         {% endfor %}
     </ul>
