@@ -1,0 +1,40 @@
+services:
+  web:
+    build: ./app
+    container_name: tareas-app
+    ports:
+      - "8080:5000"
+    environment:
+      DB_HOST: db
+      DB_NAME: tareas_db
+      DB_USER: tareas_user
+      DB_PASSWORD: tareas_pass
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tareas-network
+
+  db:
+    image: postgres:16
+    container_name: tareas-db
+    environment:
+      POSTGRES_DB: tareas_db
+      POSTGRES_USER: tareas_user
+      POSTGRES_PASSWORD: tareas_pass
+    volumes:
+      - tareas_datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tareas_user -d tareas_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tareas-network
+
+networks:
+  tareas-network:
+    driver: bridge
+
+volumes:
+  tareas_datos:
