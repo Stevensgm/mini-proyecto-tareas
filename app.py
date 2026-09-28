@@ -17,14 +17,20 @@ def crear():
 
     return redirect("/")
 
-@app.route("/editar/<int:id>", methods=["POST"])
+@app.route("/editar/<int:id>", methods=["GET", "POST"])
 def editar(id):
-    tarea = request.form["tarea"].strip()
+    if not 0 <= id < len(tareas):
+        return redirect("/")
 
-    if 0 <= id < len(tareas) and tarea:
-        tareas[id] = tarea
+    if request.method == "POST":
+        tarea = request.form["tarea"].strip()
 
-    return redirect("/")
+        if tarea:
+            tareas[id] = tarea
+
+        return redirect("/")
+
+    return render_template("editar.html", tarea=tareas[id])
 
 @app.route("/eliminar/<int:id>")
 def eliminar(id):
