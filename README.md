@@ -7,10 +7,10 @@ Aplicación web desarrollada con Flask para gestionar una lista de tareas.
 Equipo 3
 
 ## Integrantes 
-Jose Manuel Martinez Gallego
-James David Ortiz Muñoz
-Carlos Steven Giraldo Medina
-Helen Orejuela Mancilla
+- Jose Manuel Martinez Gallego
+- James David Ortiz Muñoz
+- Carlos Steven Giraldo Medina
+- Helen Orejuela Mancilla
 
 ##Descripcion
 la aplicacion permite gestionar tareas: crear, modificar y eliminar registros almacenados en un una base de datos postgreSQL. La interfaz es simple y funcional, no requiere de autenticacion ni funcionalidades adicionales a lo requerido dentro del parcial.
