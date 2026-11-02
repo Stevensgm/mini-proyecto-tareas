@@ -99,3 +99,16 @@ Se comprobó la persistencia de la siguiente manera:
 1. Se crearon tareas desde la interfaz web.
 2. Se ejecutó docker compose down (sin -v) y luego docker compose up nuevamente.
 3. Se verificó que las tareas creadas anteriormente seguían disponibles en http://localhost:8080.
+
+## Pruebas automatizadas
+
+Para instalar las dependencias de desarrollo y ejecutar las pruebas:
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
+La suite comprueba las rutas existentes del CRUD y un flujo completo. Las pruebas sustituyen la conexión a PostgreSQL por una base de datos falsa en memoria, por lo que no es necesario levantar Docker para ejecutarlas.
+
+El workflow de GitHub Actions en `.github/workflows/ci.yml` ejecuta la suite al abrir o actualizar un pull request y al enviar cambios a `main` o `master`. Las pruebas de las nuevas funcionalidades se añadirán cuando queden integradas.
