@@ -266,10 +266,10 @@
     <ul>
         {% for tarea in tareas %}
         <li>
-            <span class="texto-tarea">{{ tarea }}</span>
+            <span class="texto-tarea">{{ tarea.tarea }}</span>
             <div class="acciones">
-                <a class="editar-link" href="/editar/{{ loop.index0 }}" target="_blank" rel="noopener">Modificar</a>
-                <a class="eliminar" href="/eliminar/{{ loop.index0 }}">Eliminar</a>
+                <a class="editar-link" href="/editar/{{ tarea.id }}" target="_blank" rel="noopener">Modificar</a>
+                <a class="eliminar" href="/eliminar/{{ tarea.id }}">Eliminar</a>
             </div>
         </li>
         {% else %}
