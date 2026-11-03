@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
   <head>
@@ -91,7 +92,8 @@
         margin: 26px 0 30px;
       }
 
-      input {
+      input,
+      select {
         min-width: 0;
         flex: 1;
         padding: 12px 14px;
@@ -105,7 +107,8 @@
           box-shadow 150ms ease;
       }
 
-      input:focus {
+      input:focus,
+      select:focus {
         border-color: var(--green);
         outline: none;
         box-shadow: 0 0 0 3px rgba(23, 107, 87, 0.12);
@@ -204,6 +207,31 @@
         background: #fbf1f0;
       }
 
+      .filtro-estado {
+        margin-bottom: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .filtro-estado a {
+        color: var(--green);
+        text-decoration: none;
+      }
+
+      .filtro-estado a:hover {
+        text-decoration: underline;
+      }
+
+      .etiqueta-estado {
+        flex: 0 0 auto;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #eef3f0;
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: capitalize;
+      }
+
       .vacio {
         padding: 28px 12px;
         border: 1px dashed #cbd8d1;
@@ -256,6 +284,7 @@
       }
     </style>
   </head>
+
   <body>
     <div class="contenedor">
       <header class="encabezado">
@@ -263,10 +292,11 @@
           <p class="sobretitulo">Organización personal</p>
           <h1>Lista de tareas</h1>
         </div>
-        <span class="contador"
-          >{{ tareas|length }} {% if tareas|length == 1 %}tarea{% else
-          %}tareas{% endif %}</span
-        >
+
+        <span class="contador">
+          {{ tareas|length }}
+          {% if tareas|length == 1 %}tarea{% else %}tareas{% endif %}
+        </span>
       </header>
 
       <form class="formulario-nueva" action="/crear" method="POST">
@@ -285,27 +315,62 @@
           required
         />
 
+        <select name="estado" aria-label="Estado de la tarea">
+          {% for opcion in estados_validos %}
+          <option value="{{ opcion }}">
+            {{ opcion.replace('_', ' ') }}
+          </option>
+          {% endfor %}
+        </select>
+
         <button type="submit">Agregar</button>
       </form>
+
+      <p class="filtro-estado">
+        Filtrar por estado:
+        <a href="/">Todas</a>
+
+        {% for opcion in estados_validos %}
+        | <a href="/?estado={{ opcion }}">{{ opcion.replace('_', ' ') }}</a>
+        {% endfor %}
+
+        {% if estado_actual %}
+        <br />
+        <strong>Mostrando: {{ estado_actual.replace('_', ' ') }}</strong>
+        {% endif %}
+      </p>
 
       <ul>
         {% for tarea in tareas %}
         <li>
           <span class="texto-tarea">{{ tarea.tarea }}</span>
+
           <small>Fecha límite: {{ tarea.fecha_limite }}</small>
+
+          <span class="etiqueta-estado">
+            {{ tarea.estado.replace('_', ' ') }}
+          </span>
+
           <div class="acciones">
             <a
               class="editar-link"
               href="/editar/{{ tarea.id }}"
               target="_blank"
               rel="noopener"
-              >Modificar</a
             >
-            <a class="eliminar" href="/eliminar/{{ tarea.id }}">Eliminar</a>
+              Modificar
+            </a>
+
+            <a class="eliminar" href="/eliminar/{{ tarea.id }}">
+              Eliminar
+            </a>
           </div>
         </li>
+
         {% else %}
-        <li class="vacio">Todavía no hay tareas. Agrega la primera arriba.</li>
+        <li class="vacio">
+          Todavía no hay tareas. Agrega la primera arriba.
+        </li>
         {% endfor %}
       </ul>
     </div>

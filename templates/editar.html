@@ -67,16 +67,19 @@
             font-weight: 600;
         }
 
-        input {
+        input,
+        select {
             width: 100%;
             padding: 13px 14px;
             border: 1px solid #cbd8d1;
             border-radius: 5px;
             color: var(--ink);
             font: inherit;
+            background: #fff;
         }
 
-        input:focus {
+        input:focus,
+        select:focus {
             border-color: var(--green);
             outline: 3px solid rgba(23, 107, 87, 0.12);
         }
@@ -137,6 +140,14 @@
         <form action="" method="POST">
             <label for="tarea">Tarea</label>
             <input id="tarea" type="text" name="tarea" value="{{ tarea }}" required autofocus>
+
+            <label for="estado" style="margin-top: 16px;">Estado</label>
+            <select id="estado" name="estado">
+                {% for opcion in estados_validos %}
+                <option value="{{ opcion }}" {% if opcion == estado %}selected{% endif %}>{{ opcion.replace('_', ' ') }}</option>
+                {% endfor %}
+            </select>
+
             <div class="acciones">
                 <button type="submit">Guardar cambios</button>
                 <a class="cancelar" href="/">Cancelar</a>
