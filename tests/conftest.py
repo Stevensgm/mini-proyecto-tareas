@@ -12,17 +12,20 @@ class FakeCursor:
     def execute(self, query, params=None):
         consulta = " ".join(query.lower().split())
 
-        if consulta == "select id, tarea from tareas order by id":
+        if consulta == "select id, tarea, estado from tareas order by id":
             self.resultados = [dict(tarea) for tarea in self.tareas]
-        elif consulta == "insert into tareas (tarea) values (%s)":
+        elif consulta == "insert into tareas (tarea, estado) values (%s, %s)":
             siguiente_id = max((tarea["id"] for tarea in self.tareas), default=0) + 1
-            self.tareas.append({"id": siguiente_id, "tarea": params[0]})
-        elif consulta == "update tareas set tarea = %s where id = %s":
+            self.tareas.append(
+                {"id": siguiente_id, "tarea": params[0], "estado": params[1]}
+            )
+        elif consulta == "update tareas set tarea = %s, estado = %s where id = %s":
             for tarea in self.tareas:
-                if tarea["id"] == params[1]:
+                if tarea["id"] == params[2]:
                     tarea["tarea"] = params[0]
+                    tarea["estado"] = params[1]
                     break
-        elif consulta == "select id, tarea from tareas where id = %s":
+        elif consulta == "select id, tarea, estado from tareas where id = %s":
             self.resultado = next(
                 (dict(tarea) for tarea in self.tareas if tarea["id"] == params[0]),
                 None,

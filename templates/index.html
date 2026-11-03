@@ -195,6 +195,26 @@
             background: #fbf1f0;
         }
 
+        .filtro-estado {
+            margin-bottom: 18px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .filtro-estado a {
+            color: var(--green);
+        }
+
+        .etiqueta-estado {
+            flex: 0 0 auto;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: #eef3f0;
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: capitalize;
+        }
+
         .vacio {
             padding: 28px 12px;
             border: 1px dashed #cbd8d1;
@@ -260,13 +280,30 @@
 
     <form class="formulario-nueva" action="/crear" method="POST">
         <input type="text" name="tarea" placeholder="Agregar tareas" aria-label="Nueva tarea" required>
+        <select name="estado" aria-label="Estado de la tarea">
+            {% for opcion in estados_validos %}
+            <option value="{{ opcion }}">{{ opcion.replace('_', ' ') }}</option>
+            {% endfor %}
+        </select>
         <button type="submit">Agregar</button>
     </form>
+
+    <p class="filtro-estado">
+        Filtrar por estado:
+        <a href="/">Todas</a>
+        {% for opcion in estados_validos %}
+        | <a href="/?estado={{ opcion }}">{{ opcion.replace('_', ' ') }}</a>
+        {% endfor %}
+        {% if estado_actual %}
+        <br><strong>Mostrando: {{ estado_actual.replace('_', ' ') }}</strong>
+        {% endif %}
+    </p>
 
     <ul>
         {% for tarea in tareas %}
         <li>
             <span class="texto-tarea">{{ tarea.tarea }}</span>
+            <span class="etiqueta-estado">{{ tarea.estado.replace('_', ' ') }}</span>
             <div class="acciones">
                 <a class="editar-link" href="/editar/{{ tarea.id }}" target="_blank" rel="noopener">Modificar</a>
                 <a class="eliminar" href="/eliminar/{{ tarea.id }}">Eliminar</a>
