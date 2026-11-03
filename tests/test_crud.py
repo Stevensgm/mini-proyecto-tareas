@@ -1,3 +1,28 @@
+from datetime import date, timedelta
+from app import validar_fecha_limite
+
+
+def test_fecha_limite_hoy_es_valida():
+    assert validar_fecha_limite(date.today().isoformat())
+
+
+def test_fecha_limite_futura_es_valida():
+    fecha = (date.today() + timedelta(days=5)).isoformat()
+    assert validar_fecha_limite(fecha)
+
+
+def test_fecha_limite_pasada_es_invalida():
+    fecha = (date.today() - timedelta(days=1)).isoformat()
+    assert not validar_fecha_limite(fecha)
+
+
+def test_fecha_limite_vacia_es_invalida():
+    assert not validar_fecha_limite("")
+
+
+def test_fecha_limite_formato_incorrecto_es_invalida():
+    assert not validar_fecha_limite("25/12/2026")
+
 def test_inicio_muestra_estado_vacio(client):
     response = client.get("/")
 
@@ -7,7 +32,10 @@ def test_inicio_muestra_estado_vacio(client):
 
 
 def test_crear_tarea_y_mostrarla(client):
-    response = client.post("/crear", data={"tarea": "  Estudiar  "})
+    response = client.post("/crear", data={
+        "tarea": "  Estudiar  ",
+        "fecha_limite": date.today().isoformat()
+    })
     pagina = client.get("/")
 
     assert response.status_code == 302
@@ -23,7 +51,8 @@ def test_no_crear_tarea_vacia(client):
 
 
 def test_editar_muestra_formulario_de_tarea_existente(client):
-    client.post("/crear", data={"tarea": "Pendiente"})
+    client.post("/crear", data={"tarea": "Pendiente",
+    "fecha_limite": date.today().isoformat()})
 
     response = client.get("/editar/1")
 
@@ -32,7 +61,10 @@ def test_editar_muestra_formulario_de_tarea_existente(client):
 
 
 def test_editar_tarea(client):
-    client.post("/crear", data={"tarea": "Texto anterior"})
+    client.post("/crear", data={
+        "tarea": "Texto anterior",
+        "fecha_limite": date.today().isoformat()
+    })
 
     response = client.post("/editar/1", data={"tarea": "Texto actualizado"})
     contenido = client.get("/").get_data(as_text=True)
@@ -43,7 +75,10 @@ def test_editar_tarea(client):
 
 
 def test_no_reemplazar_tarea_con_texto_vacio(client):
-    client.post("/crear", data={"tarea": "Conservar"})
+    client.post("/crear", data={
+        "tarea": "Conservar",
+        "fecha_limite": date.today().isoformat()
+    })
 
     response = client.post("/editar/1", data={"tarea": "   "})
     contenido = client.get("/").get_data(as_text=True)
@@ -53,7 +88,10 @@ def test_no_reemplazar_tarea_con_texto_vacio(client):
 
 
 def test_eliminar_tarea(client):
-    client.post("/crear", data={"tarea": "Eliminar"})
+    client.post("/crear", data={
+        "tarea": "Eliminar",
+        "fecha_limite": date.today().isoformat()
+    })
 
     response = client.get("/eliminar/1")
     contenido = client.get("/").get_data(as_text=True)

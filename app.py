@@ -3,6 +3,7 @@ import time
 import psycopg2
 import psycopg2.extras
 from flask import Flask, render_template, request, redirect
+from datetime import date 
 
 app = Flask(__name__)
 
@@ -11,6 +12,15 @@ DB_NAME = os.environ.get("DB_NAME", "tareas_db")
 DB_USER = os.environ.get("DB_USER", "tareas_user")
 DB_PASSWORD = os.environ.get("DB_PASSWORD", "tareas_pass")
 
+def validar_fecha_limite(fecha):
+    if not fecha:
+        return False
+
+    try:
+        fecha_convertida = date.fromisoformat(fecha)
+        return fecha_convertida >= date.today()
+    except ValueError:
+        return False
 
 def get_connection():
     intentos = 0
@@ -34,7 +44,7 @@ def get_connection():
 def index():
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id, tarea FROM tareas ORDER BY id")
+    cur.execute("SELECT id, tarea, fecha_limite FROM tareas ORDER BY id")
     tareas = cur.fetchall()
     cur.close()
     conn.close()
@@ -43,12 +53,21 @@ def index():
 
 @app.route("/crear", methods=["POST"])
 def crear():
-    tarea = request.form["tarea"].strip()
+    tarea = request.form.get("tarea", "").strip()
+    fecha_limite = request.form.get("fecha_limite", "")
 
     if tarea:
+        if not validar_fecha_limite(fecha_limite):
+            return "Fecha límite inválida. Debe ser hoy o una fecha futura.", 400
+
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("INSERT INTO tareas (tarea) VALUES (%s)", (tarea,))
+
+        cur.execute(
+            "INSERT INTO tareas (tarea, fecha_limite) VALUES (%s, %s)",
+            (tarea, fecha_limite)
+        )
+
         conn.commit()
         cur.close()
         conn.close()

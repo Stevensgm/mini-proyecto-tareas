@@ -12,25 +12,37 @@ class FakeCursor:
     def execute(self, query, params=None):
         consulta = " ".join(query.lower().split())
 
-        if consulta == "select id, tarea from tareas order by id":
+        if consulta == "select id, tarea, fecha_limite from tareas order by id":
             self.resultados = [dict(tarea) for tarea in self.tareas]
-        elif consulta == "insert into tareas (tarea) values (%s)":
-            siguiente_id = max((tarea["id"] for tarea in self.tareas), default=0) + 1
-            self.tareas.append({"id": siguiente_id, "tarea": params[0]})
+
+        elif consulta == "insert into tareas (tarea, fecha_limite) values (%s, %s)":
+            siguiente_id = max(
+                (tarea["id"] for tarea in self.tareas), default=0
+            ) + 1
+
+            self.tareas.append({
+                "id": siguiente_id,
+                "tarea": params[0],
+                "fecha_limite": params[1]
+            })
+
         elif consulta == "update tareas set tarea = %s where id = %s":
             for tarea in self.tareas:
                 if tarea["id"] == params[1]:
                     tarea["tarea"] = params[0]
                     break
+
         elif consulta == "select id, tarea from tareas where id = %s":
             self.resultado = next(
                 (dict(tarea) for tarea in self.tareas if tarea["id"] == params[0]),
                 None,
             )
+
         elif consulta == "delete from tareas where id = %s":
             self.tareas[:] = [
                 tarea for tarea in self.tareas if tarea["id"] != params[0]
             ]
+
         else:
             raise AssertionError(f"Consulta SQL inesperada: {query}")
 
