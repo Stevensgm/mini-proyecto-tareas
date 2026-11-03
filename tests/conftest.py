@@ -1,3 +1,4 @@
+
 import pytest
 
 import app as tareas_app
@@ -12,28 +13,51 @@ class FakeCursor:
     def execute(self, query, params=None):
         consulta = " ".join(query.lower().split())
 
-        if consulta == "select id, tarea, estado from tareas order by id":
+        if consulta == "select id, tarea, fecha_limite, estado from tareas order by id":
             self.resultados = [dict(tarea) for tarea in self.tareas]
-        elif consulta == "insert into tareas (tarea, estado) values (%s, %s)":
-            siguiente_id = max((tarea["id"] for tarea in self.tareas), default=0) + 1
-            self.tareas.append(
-                {"id": siguiente_id, "tarea": params[0], "estado": params[1]}
-            )
+
+        elif consulta == "insert into tareas (tarea, fecha_limite, estado) values (%s, %s, %s)":
+            siguiente_id = max(
+                (tarea["id"] for tarea in self.tareas), default=0
+            ) + 1
+
+            self.tareas.append({
+                "id": siguiente_id,
+                "tarea": params[0],
+                "fecha_limite": params[1],
+                "estado": params[2]
+            })
+
+        elif consulta == "update tareas set tarea = %s, fecha_limite = %s, estado = %s where id = %s":
+            for tarea in self.tareas:
+                if tarea["id"] == params[3]:
+                    tarea["tarea"] = params[0]
+                    tarea["fecha_limite"] = params[1]
+                    tarea["estado"] = params[2]
+                    break
+
         elif consulta == "update tareas set tarea = %s, estado = %s where id = %s":
             for tarea in self.tareas:
                 if tarea["id"] == params[2]:
                     tarea["tarea"] = params[0]
                     tarea["estado"] = params[1]
                     break
-        elif consulta == "select id, tarea, estado from tareas where id = %s":
+
+        elif consulta == "select id, tarea, fecha_limite, estado from tareas where id = %s":
             self.resultado = next(
-                (dict(tarea) for tarea in self.tareas if tarea["id"] == params[0]),
+                (
+                    dict(tarea)
+                    for tarea in self.tareas
+                    if tarea["id"] == params[0]
+                ),
                 None,
             )
+
         elif consulta == "delete from tareas where id = %s":
             self.tareas[:] = [
                 tarea for tarea in self.tareas if tarea["id"] != params[0]
             ]
+
         else:
             raise AssertionError(f"Consulta SQL inesperada: {query}")
 
@@ -65,6 +89,7 @@ class FakeConnection:
 def client(monkeypatch):
     tareas_app.app.config.update(TESTING=True)
     tareas = []
+
     monkeypatch.setattr(
         tareas_app,
         "get_connection",
