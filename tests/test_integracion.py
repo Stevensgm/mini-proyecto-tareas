@@ -24,5 +24,5 @@ def test_flujo_completo_de_tareas(client):
     contenido = response.get_data(as_text=True)
 
     assert response.status_code == 200
-    assert "Tarea inexistente" in contenido
+    assert "Primera actualizada" in contenido
     assert "Segunda" not in contenido
